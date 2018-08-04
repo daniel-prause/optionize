@@ -1,0 +1,31 @@
+.optionize {
+    list-style: none;
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+    padding: 5px;
+    cursor: pointer;
+    max-height: 200px;
+    overflow: auto;
+    display: grid;
+    font-family: Arial, sans-serif;
+}
+.optionize > li.selected {
+    background-color: lightblue;
+}
+.optionize > li.disabled {
+    color: #999;
+}
+.optionize > li {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome and Opera */
+    white-space: nowrap;
+}
+
+.optionize > li.optgroup {
+    font-weight: bold;
+}
