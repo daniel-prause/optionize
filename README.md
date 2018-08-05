@@ -8,7 +8,7 @@ This plugin is an enhancer to select tags with the multiple attribute supplied.
 
 # Features
 
-* Option to add HTML-elements before and after an options's and/or optgroups text
+* Option to add HTML-elements before and after an option's and/or optgroup's text
 * By clicking an optgroup, all options of the optgroup will be selected/deselected
 * If your multi select box is wrapped in a fieldset with the disabled attribute, the options will be disabled.
 * Reacts to updates on the original multi select box (adding/removing/disabling/enabling/changing elements)
