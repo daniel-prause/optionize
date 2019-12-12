@@ -1,4 +1,4 @@
-# Optionize 1.0
+# Optionize 1.0.1
 
 # What is Optionize?
 
