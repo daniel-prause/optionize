@@ -6,20 +6,27 @@
 (function ( $ ) {
   var lastClicked = null;
   $.fn.optionize = function() {
-    if($(this).attr('multiple') !== 'multiple') {
-      console.log('sorry, currently optionize only works on multi select boxes.');
-      return;
-    }
-    var options = this.find("optgroup, option");
-    var uniq = $(this).attr('id') || $(this).attr('name') || $(this).index();
-    var optionsAsList = $("<ul>").addClass("optionize optionize-"+uniq+"");
-    buildList(this, optionsAsList, options);
-    this.hide();
-    this.before(optionsAsList);
-    handleOptionSelection(this, optionsAsList);
-    handleSelectUpdate(this, optionsAsList);
-    handleOptgroupClick(this, optionsAsList);
-    return this;
+    $(this).each(function(index, element) {
+      if($(element).attr('multiple') !== 'multiple') {
+        console.log('sorry, currently optionize only works on multi select boxes.');
+        return;
+      }
+      var options = $(element).find("optgroup, option");
+      var uniq = $(element).attr('id') || $(element).attr('name');
+      if(!uniq) {
+         uniq = "id-"+$("select").index($(element));
+         $(element).attr('id', uniq);
+      }
+
+      var optionsAsList = $("<ul>").addClass("optionize optionize-"+uniq+"");
+      buildList($(element), optionsAsList, options);
+      $(element).hide();
+      $(element).before(optionsAsList);
+      handleOptionSelection($(element), optionsAsList);
+      handleSelectUpdate($(element), optionsAsList);
+      handleOptgroupClick($(element), optionsAsList);
+    });
+    return $(this);
   };
 
   function buildOptgroup(optionsAsList, object) {
@@ -31,14 +38,14 @@
   }
 
   function buildOption(optionsAsList, object) {
-    var selected_or_not = object.selected ? 'selected' : '';
-    var disabled_or_not = object.disabled ? 'disabled' : '';
+    var selected = object.selected ? 'selected' : '';
+    var disabled = object.disabled ? 'disabled' : '';
     var el = $("<li>", {
       "data-text": object.innerHTML,
       "data-value": object.value,
       "data-disabled": object.disabled,
       "data-selected": object.selected
-    }).addClass(selected_or_not).addClass(disabled_or_not).addClass('option');
+    }).addClass(selected).addClass(disabled).addClass('option');
     var after = object.dataset['afterText'] || '';
     var before = object.dataset['beforeText'] || '';
     el.html(before+object.innerHTML+after);
@@ -46,9 +53,9 @@
   }
 
   function buildList(originalSelector, optionsAsList, options) {
-    var list_disabled = originalSelector.closest('fieldset').attr('disabled') == 'disabled';
+    var listDisabled = originalSelector.closest('fieldset').attr('disabled') == 'disabled';
     $.each( options, function( index, object ) {
-      if(list_disabled) {
+      if(listDisabled) {
         object.disabled = true;
       }
       if(object.tagName == 'OPTGROUP') {
@@ -129,15 +136,15 @@
 
   function handleOptgroupClick(originalSelector, optionsAsList) {
     optionsAsList.on("click", ".optgroup", function() {
-      var optgroup_index = $(this).index('.optgroup');
-      var original_optgroup = originalSelector.find('optgroup:eq('+optgroup_index+')');
-      var enabled_options = original_optgroup.find('option:enabled');
-      var selected_options = original_optgroup.find('option:selected');
-      if(enabled_options.length == selected_options.length) {
-        enabled_options.prop("selected", false);
+      var optgroupIndex = optionsAsList.find(".optgroup").index($(this))
+      var originalOptgroup = originalSelector.find('optgroup:eq('+optgroupIndex+')');
+      var enabledOptions = originalOptgroup.find('option:enabled');
+      var selectedOptions = originalOptgroup.find('option:selected');
+      if(enabledOptions.length == selectedOptions.length) {
+        enabledOptions.prop("selected", false);
       }
       else {
-        enabled_options.prop("selected", true);
+        enabledOptions.prop("selected", true);
       }
       originalSelector.change();
     })

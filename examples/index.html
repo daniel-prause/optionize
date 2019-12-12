@@ -11,7 +11,7 @@
         <section id="examples">
             <h1>This is an example page for the Optionize plugin.</h1>
             <article>
-                <h2>Example 1: Adding Flags after option</h2>
+                <h2>Example 1: Adding flags after option</h2>
                 <select multiple id="flag-example">
                     <option value="germany" data-before-text="<img src='./images/germany.png'>" data-after-text="<div class='popup-opener'>.. hover here for more info</div><div class='popup'>is a country in Europe.</div>">Germany</option>
                     <option value="france" data-before-text="<img src='./images/france.png'>">France</option>
@@ -36,8 +36,40 @@
                 </p>
             </article>
             <article>
-                <h2>Example 2: Adding Flags after option - with optgroups</h2>
+                <h2>Example 2: Adding flags after option - with optgroups</h2>
                 <select multiple id="flag-example-grouped">
+                    <optgroup label="Europe" data-before-text="<strong>-</strong>" data-after-text="<strong>-</strong>">
+                        <option value="germany" data-before-text="<img src='./images/germany.png'>" data-after-text="<div class='popup-opener'>.. hover here for more info</div><div class='popup'>is a country in Europe.</div>">Germany</option>
+                        <option value="france" data-before-text="<img src='./images/france.png'>">France</option>
+                        <option value="spain" data-before-text="<img src='./images/spain.png'>">Spain</option>
+                        <option value="uk" data-before-text="<img src='./images/uk.png'>">UK</option>
+                        <option value="netherlands" data-before-text="<img src='./images/netherlands.png'>">Netherlands</option>
+                        <option value="italy" data-before-text="<img src='./images/italy.png'>">Italy</option>
+                        <option value="belgium" data-before-text="<img src='./images/belgium.png'>">Belgium</option>
+                        <option value="denmark" data-before-text="<img src='./images/denmark.png'>">Denmark</option>
+                    </optgroup>
+                    <optgroup label="Other" data-before-text="-" data-after-text="-">
+                        <option value="us" data-before-text="<img src='./images/us.png'>">US</option>
+                        <option value="canada" data-before-text="<img src='./images/canada.png'>">Canada</option>
+                        <option value="australia" data-before-text="<img src='./images/australia.png'>">Australia</option>
+                    </optgroup>
+                </select>
+                <p>
+                    You can add HTML elements before and after the optgroup-label as well.<br><br>
+                    <strong>Example:</strong><br>
+                    <code>
+                        &lt;optgroup label=&quot;Europe&quot; data-before-text=&quot;&lt;strong&gt;-&lt;/strong&gt;&quot; data-after-text=&quot;&lt;strong&gt;-&lt;/strong&gt;&quot;&gt;<br>
+                        &nbsp;&nbsp;&lt;option value=&quot;germany&quot; data-before-text=&quot;&lt;img src='./images/germany.png'&gt;&quot; data-after-text=&quot;&lt;div class='popup-opener'&gt;.. hover here for more info&lt;/div&gt;&lt;div class='popup'&gt;is a country in Europe.&lt;/div&gt;&quot;&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Germany<br>
+                        &nbsp;&nbsp;&lt;/option&gt;<br>
+                        &lt;/optgroup&gt;
+                    </code>
+                </p>
+            </article>
+
+            <article>
+                <h2>Example 3: Using optionize without id or name</h2>
+                <select multiple>
                     <optgroup label="Europe" data-before-text="<strong>-</strong>" data-after-text="<strong>-</strong>">
                         <option value="germany" data-before-text="<img src='./images/germany.png'>" data-after-text="<div class='popup-opener'>.. hover here for more info</div><div class='popup'>is a country in Europe.</div>">Germany</option>
                         <option value="france" data-before-text="<img src='./images/france.png'>">France</option>
@@ -94,8 +126,7 @@
         </style>
         <script type="text/javascript">
             $(document).ready(function(){
-                $("#flag-example").optionize()
-                $("#flag-example-grouped").optionize()
+                $("select").optionize()
             })
         </script>
     </body>
