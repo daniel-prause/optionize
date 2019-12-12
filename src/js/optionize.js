@@ -5,26 +5,45 @@
 
 (function ( $ ) {
   var lastClicked = null;
-  $.fn.optionize = function() {
+  var config = {
+    searchBox: false
+  }
+  var elementConfig = {}
+  $.fn.optionize = function(userConfig) {
     $(this).each(function(index, element) {
       if($(element).attr('multiple') !== 'multiple') {
         console.log('sorry, currently optionize only works on multi select boxes.');
         return;
       }
-      var options = $(element).find("optgroup, option");
+
       var uniq = $(element).attr('id') || $(element).attr('name');
+
       if(!uniq) {
          uniq = "id-"+$("select").index($(element));
          $(element).attr('id', uniq);
       }
 
+      if($(".optionize-"+uniq).length > 0) {
+        return; // optionize already initialzed for this element
+      }
+
+      if(userConfig && (typeof userConfig  === "object")) {
+        elementConfig[uniq] = {}
+        $.extend( elementConfig[uniq], config, userConfig );
+      }
+
+      var options = $(element).find("optgroup, option");
       var optionsAsList = $("<ul>").addClass("optionize optionize-"+uniq);
       buildList($(element), optionsAsList, options);
       $(element).hide();
       $(element).before(optionsAsList);
       handleOptionSelection($(element), optionsAsList);
-      handleSelectUpdate($(element), optionsAsList);
+      handleSelectUpdate($(element), optionsAsList, uniq);
       handleOptgroupClick($(element), optionsAsList);
+
+      if(elementConfig[uniq].searchBox) {
+        addSearchBox($(element), optionsAsList, "optionize-searchbox-"+uniq)
+      }
     });
     return $(this);
   };
@@ -126,11 +145,14 @@
     )
   }
 
-  function handleSelectUpdate(originalSelector, optionsAsList) {
+  function handleSelectUpdate(originalSelector, optionsAsList, uniq) {
     originalSelector.on("change DOMSubtreeModified click", function() {
       optionsAsList.find("li").remove();
       var options = originalSelector.find("optgroup, option");
       buildList(originalSelector, optionsAsList, options);
+      if(elementConfig[uniq].searchBox) {
+        showOnly(originalSelector, optionsAsList, $("#optionize-searchbox-"+uniq))
+      }
     })
   }
 
@@ -148,6 +170,37 @@
       }
       originalSelector.change();
     })
+  }
+
+  function addSearchBox(originalSelector, optionsAsList, id) {
+    var searchBox = $(
+      "<input>",
+      {
+        type: 'text',
+        id: id,
+        class: 'optionize-search-box'
+      }
+    )
+    searchBox.on("keyup", function() {
+      showOnly(originalSelector, optionsAsList, searchBox)
+    })
+    optionsAsList.before(searchBox);
+  }
+
+  function showOnly(originalSelector, optionsAsList, input) {
+    if($(input).val().length > 0) {
+      optionsAsList.find(".optgroup").hide()
+    } else {
+      optionsAsList.find(".optgroup").show()
+    }
+    optionsAsList
+      .find("li")
+      .each(
+        function(index, element) {
+          regex = new RegExp($(input).val(), "i")
+          regex.test($(element).text()) ? $(element).show() : $(element).hide();
+        }
+      )
   }
 
 }( jQuery ));

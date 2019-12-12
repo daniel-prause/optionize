@@ -12,7 +12,7 @@
             <h1>This is an example page for the Optionize plugin.</h1>
             <article>
                 <h2>Example 1: Adding flags after option</h2>
-                <select multiple id="flag-example">
+                <select multiple id="flag-example" autocomplete="off">
                     <option value="germany" data-before-text="<img src='./images/germany.png'>" data-after-text="<div class='popup-opener'>.. hover here for more info</div><div class='popup'>is a country in Europe.</div>">Germany</option>
                     <option value="france" data-before-text="<img src='./images/france.png'>">France</option>
                     <option value="us" data-before-text="<img src='./images/us.png'>">US</option>
@@ -37,7 +37,7 @@
             </article>
             <article>
                 <h2>Example 2: Adding flags after option - with optgroups</h2>
-                <select multiple id="flag-example-grouped">
+                <select multiple id="flag-example-grouped" autocomplete="off">
                     <optgroup label="Europe" data-before-text="<strong>-</strong>" data-after-text="<strong>-</strong>">
                         <option value="germany" data-before-text="<img src='./images/germany.png'>" data-after-text="<div class='popup-opener'>.. hover here for more info</div><div class='popup'>is a country in Europe.</div>">Germany</option>
                         <option value="france" data-before-text="<img src='./images/france.png'>">France</option>
@@ -69,7 +69,7 @@
 
             <article>
                 <h2>Example 3: Using optionize without id or name</h2>
-                <select multiple>
+                <select multiple autocomplete="off">
                     <optgroup label="Europe" data-before-text="<strong>-</strong>" data-after-text="<strong>-</strong>">
                         <option value="germany" data-before-text="<img src='./images/germany.png'>" data-after-text="<div class='popup-opener'>.. hover here for more info</div><div class='popup'>is a country in Europe.</div>">Germany</option>
                         <option value="france" data-before-text="<img src='./images/france.png'>">France</option>
@@ -126,7 +126,9 @@
         </style>
         <script type="text/javascript">
             $(document).ready(function(){
-                $("select").optionize()
+              $("select").optionize({
+                searchBox: true
+              })
             })
         </script>
     </body>
