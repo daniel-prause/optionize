@@ -18,7 +18,7 @@
          $(element).attr('id', uniq);
       }
 
-      var optionsAsList = $("<ul>").addClass("optionize optionize-"+uniq+"");
+      var optionsAsList = $("<ul>").addClass("optionize optionize-"+uniq);
       buildList($(element), optionsAsList, options);
       $(element).hide();
       $(element).before(optionsAsList);
