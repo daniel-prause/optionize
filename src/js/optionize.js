@@ -183,12 +183,7 @@
       var originalOptgroup = originalSelector.find('optgroup:eq('+optgroupIndex+')');
       var enabledOptions = originalOptgroup.find('option:enabled');
       var selectedOptions = originalOptgroup.find('option:selected');
-      if(enabledOptions.length == selectedOptions.length) {
-        enabledOptions.prop("selected", false);
-      }
-      else {
-        enabledOptions.prop("selected", true);
-      }
+      enabledOptions.prop("selected", enabledOptions.length != selectedOptions.length);
       originalSelector.change();
     })
   }
