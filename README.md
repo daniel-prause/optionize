@@ -67,8 +67,18 @@ Include jQuery and Optionize in your websites head tag:
 ```
 
 #### Configuration
-Right now, you can not configure Optionize.
-You can however change the style of every Optionize you create.
+The following configuration options are available:
+```
+$("select").optionize({
+  searchBox: {
+    enable: true,
+    placeholder: 'Your fancy placeholder'
+  },
+  noEntriesText: 'Text that is shown when no entries are available'
+})
+```
+
+You can change the style of every Optionize you create as well.
 Optionize will add a class based on the id of your initial multi select box.
 To change the style of a specific Optionize element, you can use the following selector (see the example list above):
 ```
