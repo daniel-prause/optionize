@@ -1,5 +1,5 @@
 /*
- Optionize 1.0, a multi select box enhancer for jQuery
+ Optionize 1.0.3, a multi select box enhancer for jQuery
  by Daniel Prause
 */
 
@@ -57,6 +57,7 @@
     var before = object.dataset['beforeText'] || '';
     var el = $("<li>").addClass('optgroup');
     el.html(before+object.label+after);
+    el.attr("data-hidden", "false")
     optionsAsList.append(el);
   }
 
@@ -69,7 +70,7 @@
       "data-value": object.value,
       "data-disabled": object.disabled,
       "data-selected": object.selected,
-      "data-hidden": object.hidden || false,
+      "data-hidden": hidden,
       "data-no-entries-element": object.noEntriesElement || false
     }).addClass(selected).addClass(disabled).addClass('option');
     if(object.hidden) {
@@ -210,9 +211,9 @@
 
   function showOnly(originalSelector, optionsAsList, input) {
     if($(input).val().length > 0) {
-      optionsAsList.find(".optgroup").hide()
+      optionsAsList.find(".optgroup").attr("data-hidden", "true").hide()
     } else {
-      optionsAsList.find(".optgroup").show()
+      optionsAsList.find(".optgroup").attr("data-hidden", "false").show()
     }
     var shown = false;
     optionsAsList
@@ -227,7 +228,7 @@
             $(element).hide();
           }
           // show no entries option
-          if(shown == 0 && $(element).attr("data-no-entries-element") == "true") {
+          if(!shown && $(element).attr("data-no-entries-element") == "true") {
             $(element).show();
           }
         }
