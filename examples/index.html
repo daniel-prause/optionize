@@ -127,7 +127,11 @@
         <script type="text/javascript">
             $(document).ready(function(){
               $("select").optionize({
-                searchBox: true
+                searchBox: {
+                  enabled: true,
+                  placeholder: 'Search for something'
+                },
+                noEntriesText: 'No available entries'
               })
             })
         </script>

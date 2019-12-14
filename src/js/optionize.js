@@ -6,7 +6,11 @@
 (function ( $ ) {
   var lastClicked = null;
   var config = {
-    searchBox: false
+    searchBox: {
+      enabled: false,
+      placeholder: 'Search'
+    },
+    noEntriesText: 'no entries'
   }
   var elementConfig = {}
   $.fn.optionize = function(userConfig) {
@@ -29,20 +33,20 @@
 
       if(userConfig && (typeof userConfig  === "object")) {
         elementConfig[uniq] = {}
-        $.extend( elementConfig[uniq], config, userConfig );
+        $.extend( true, elementConfig[uniq], config, userConfig );
       }
 
       var options = $(element).find("optgroup, option");
       var optionsAsList = $("<ul>").addClass("optionize optionize-"+uniq);
-      buildList($(element), optionsAsList, options);
+      buildList($(element), optionsAsList, options, uniq);
       $(element).hide();
       $(element).before(optionsAsList);
       handleOptionSelection($(element), optionsAsList);
       handleSelectUpdate($(element), optionsAsList, uniq);
       handleOptgroupClick($(element), optionsAsList);
 
-      if(elementConfig[uniq].searchBox) {
-        addSearchBox($(element), optionsAsList, "optionize-searchbox-"+uniq)
+      if(elementConfig[uniq].searchBox.enabled) {
+        addSearchBox($(element), optionsAsList, "optionize-searchbox-"+uniq, uniq)
       }
     });
     return $(this);
@@ -59,19 +63,25 @@
   function buildOption(optionsAsList, object) {
     var selected = object.selected ? 'selected' : '';
     var disabled = object.disabled ? 'disabled' : '';
+    var hidden = object.hidden || false;
     var el = $("<li>", {
       "data-text": object.innerHTML,
       "data-value": object.value,
       "data-disabled": object.disabled,
-      "data-selected": object.selected
+      "data-selected": object.selected,
+      "data-hidden": object.hidden || false,
+      "data-no-entries-element": object.noEntriesElement || false
     }).addClass(selected).addClass(disabled).addClass('option');
+    if(object.hidden) {
+      el.css("display", "none")
+    }
     var after = object.dataset['afterText'] || '';
     var before = object.dataset['beforeText'] || '';
     el.html(before+object.innerHTML+after);
     optionsAsList.append(el);
   }
 
-  function buildList(originalSelector, optionsAsList, options) {
+  function buildList(originalSelector, optionsAsList, options, uniq) {
     var listDisabled = originalSelector.closest('fieldset').attr('disabled') == 'disabled';
     $.each( options, function( index, object ) {
       if(listDisabled) {
@@ -82,6 +92,16 @@
       } else {
         buildOption(optionsAsList, object);
       }
+    });
+    // build "no entries found option"
+    buildOption(optionsAsList, {
+      innerHTML: elementConfig[uniq].noEntriesText,
+      disabled: true,
+      selected: false,
+      hidden: options.length > 0,
+      value: '-',
+      dataset: {},
+      noEntriesElement: true
     });
   }
 
@@ -149,8 +169,8 @@
     originalSelector.on("change DOMSubtreeModified click", function() {
       optionsAsList.find("li").remove();
       var options = originalSelector.find("optgroup, option");
-      buildList(originalSelector, optionsAsList, options);
-      if(elementConfig[uniq].searchBox) {
+      buildList(originalSelector, optionsAsList, options, uniq);
+      if(elementConfig[uniq].searchBox.enabled) {
         showOnly(originalSelector, optionsAsList, $("#optionize-searchbox-"+uniq))
       }
     })
@@ -172,13 +192,14 @@
     })
   }
 
-  function addSearchBox(originalSelector, optionsAsList, id) {
+  function addSearchBox(originalSelector, optionsAsList, id, uniq) {
     var searchBox = $(
       "<input>",
       {
         type: 'text',
         id: id,
-        class: 'optionize-search-box'
+        class: 'optionize-search-box',
+        placeholder: elementConfig[uniq].searchBox.placeholder
       }
     )
     searchBox.on("keyup", function() {
@@ -193,12 +214,22 @@
     } else {
       optionsAsList.find(".optgroup").show()
     }
+    var shown = false;
     optionsAsList
       .find("li")
       .each(
         function(index, element) {
           regex = new RegExp($(input).val(), "i")
-          regex.test($(element).text()) ? $(element).show() : $(element).hide();
+          if(regex.test($(element).text()) && $(element).attr("data-hidden") == "false") {
+            shown = true; // at least one element is shown
+            $(element).show();
+          } else {
+            $(element).hide();
+          }
+          // show no entries option
+          if(shown == 0 && $(element).attr("data-no-entries-element") == "true") {
+            $(element).show();
+          }
         }
       )
   }
