@@ -28,7 +28,7 @@
       }
 
       if($(".optionize-"+uniq).length > 0) {
-        return; // optionize already initialzed for this element
+        return; // optionize already initialized for this element
       }
 
       if(userConfig && (typeof userConfig  === "object")) {
