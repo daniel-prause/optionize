@@ -1,5 +1,5 @@
 /*
- Optionize 1.0.3, a multi select box enhancer for jQuery
+ Optionize 1.0.4, a multi select box enhancer for jQuery
  by Daniel Prause
 */
 
@@ -14,7 +14,7 @@
   }
   var elementConfig = {}
   $.fn.optionize = function(userConfig) {
-    $(this).each(function(index, element) {
+    $(this).each(function(_index, element) {
       if($(element).attr('multiple') !== 'multiple') {
         console.log('sorry, currently optionize only works on multi select boxes.');
         return;
@@ -23,11 +23,11 @@
       var uniq = $(element).attr('id') || $(element).attr('name');
 
       if(!uniq) {
-         uniq = "id-"+$("select").index($(element));
+         uniq = `id-${$("select").index($(element))}`;
          $(element).attr('id', uniq);
       }
 
-      if($(".optionize-"+uniq).length > 0) {
+      if($(`.optionize-${uniq}`).length > 0) {
         return; // optionize already initialized for this element
       }
 
@@ -37,7 +37,7 @@
       }
 
       var options = $(element).find("optgroup, option");
-      var optionsAsList = $("<ul>").addClass("optionize optionize-"+uniq);
+      var optionsAsList = $("<ul>").addClass(`optionize optionize-${uniq}`);
       buildList($(element), optionsAsList, options, uniq);
       $(element).hide();
       $(element).before(optionsAsList);
@@ -46,7 +46,7 @@
       handleOptgroupClick($(element), optionsAsList);
 
       if(elementConfig[uniq].searchBox.enabled) {
-        addSearchBox($(element), optionsAsList, "optionize-searchbox-"+uniq, uniq)
+        addSearchBox(optionsAsList, `optionize-searchbox-${uniq}`, uniq)
       }
     });
     return $(this);
@@ -56,7 +56,7 @@
     var after = object.dataset['afterText'] || '';
     var before = object.dataset['beforeText'] || '';
     var el = $("<li>").addClass('optgroup');
-    el.html(before+object.label+after);
+    el.html(`${before}${object.label}${after}`);
     el.attr("data-hidden", "false")
     optionsAsList.append(el);
   }
@@ -78,13 +78,13 @@
     }
     var after = object.dataset['afterText'] || '';
     var before = object.dataset['beforeText'] || '';
-    el.html(before+object.innerHTML+after);
+    el.html(`${before}${object.innerHTML}${after}`);
     optionsAsList.append(el);
   }
 
   function buildList(originalSelector, optionsAsList, options, uniq) {
     var listDisabled = originalSelector.closest('fieldset').attr('disabled') == 'disabled';
-    $.each( options, function( index, object ) {
+    $.each( options, function(_index, object ) {
       if(listDisabled) {
         object.disabled = true;
       }
@@ -172,7 +172,7 @@
       var options = originalSelector.find("optgroup, option");
       buildList(originalSelector, optionsAsList, options, uniq);
       if(elementConfig[uniq].searchBox.enabled) {
-        showOnly(originalSelector, optionsAsList, $("#optionize-searchbox-"+uniq))
+        showOnly(optionsAsList, $(`#optionize-searchbox-${uniq}`))
       }
     })
   }
@@ -180,7 +180,7 @@
   function handleOptgroupClick(originalSelector, optionsAsList) {
     optionsAsList.on("click", ".optgroup", function() {
       var optgroupIndex = optionsAsList.find(".optgroup").index($(this))
-      var originalOptgroup = originalSelector.find('optgroup:eq('+optgroupIndex+')');
+      var originalOptgroup = originalSelector.find(`optgroup:eq('${optgroupIndex}')`);
       var enabledOptions = originalOptgroup.find('option:enabled');
       var selectedOptions = originalOptgroup.find('option:selected');
       if(enabledOptions.length == selectedOptions.length) {
@@ -193,7 +193,7 @@
     })
   }
 
-  function addSearchBox(originalSelector, optionsAsList, id, uniq) {
+  function addSearchBox(optionsAsList, id, uniq) {
     var searchBox = $(
       "<input>",
       {
@@ -204,12 +204,12 @@
       }
     )
     searchBox.on("keyup", function() {
-      showOnly(originalSelector, optionsAsList, searchBox)
+      showOnly(optionsAsList, searchBox)
     })
     optionsAsList.before(searchBox);
   }
 
-  function showOnly(originalSelector, optionsAsList, input) {
+  function showOnly(optionsAsList, input) {
     if($(input).val().length > 0) {
       optionsAsList.find(".optgroup").attr("data-hidden", "true").hide()
     } else {
@@ -219,7 +219,7 @@
     optionsAsList
       .find("li")
       .each(
-        function(index, element) {
+        function(_index, element) {
           regex = new RegExp($(input).val(), "i")
           if(regex.test($(element).text()) && $(element).attr("data-hidden") == "false") {
             shown = true; // at least one element is shown
