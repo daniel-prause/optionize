@@ -20,33 +20,33 @@
         return;
       }
 
-      var uniq = $(element).attr('id') || $(element).attr('name');
+      var identifier = $(element).attr('id') || $(element).attr('name');
 
-      if(!uniq) {
-         uniq = `id-${$("select").index($(element))}`;
-         $(element).attr('id', uniq);
+      if(!identifier) {
+         identifier = `id-${$("select").index($(element))}`;
+         $(element).attr('id', identifier);
       }
 
-      if($(`.optionize-${uniq}`).length > 0) {
+      if($(`.optionize-${identifier}`).length > 0) {
         return; // optionize already initialized for this element
       }
 
       if(userConfig && (typeof userConfig  === "object")) {
-        elementConfig[uniq] = {}
-        $.extend( true, elementConfig[uniq], config, userConfig );
+        elementConfig[identifier] = {}
+        $.extend( true, elementConfig[identifier], config, userConfig );
       }
 
       var options = $(element).find("optgroup, option");
-      var optionsAsList = $("<ul>").addClass(`optionize optionize-${uniq}`);
-      buildList($(element), optionsAsList, options, uniq);
+      var optionsAsList = $("<ul>").addClass(`optionize optionize-${identifier}`);
+      buildList($(element), optionsAsList, options, identifier);
       $(element).hide();
       $(element).before(optionsAsList);
       handleOptionSelection($(element), optionsAsList);
-      handleSelectUpdate($(element), optionsAsList, uniq);
+      handleSelectUpdate($(element), optionsAsList, identifier);
       handleOptgroupClick($(element), optionsAsList);
 
-      if(elementConfig[uniq].searchBox.enabled) {
-        addSearchBox(optionsAsList, `optionize-searchbox-${uniq}`, uniq)
+      if(elementConfig[identifier].searchBox.enabled) {
+        addSearchBox(optionsAsList, `optionize-searchbox-${identifier}`, identifier)
       }
     });
     return $(this);
@@ -82,7 +82,7 @@
     optionsAsList.append(el);
   }
 
-  function buildList(originalSelector, optionsAsList, options, uniq) {
+  function buildList(originalSelector, optionsAsList, options, identifier) {
     var listDisabled = originalSelector.closest('fieldset').attr('disabled') == 'disabled';
     $.each( options, function(_index, object ) {
       if(listDisabled) {
@@ -96,7 +96,7 @@
     });
     // build "no entries found option"
     buildOption(optionsAsList, {
-      innerHTML: elementConfig[uniq].noEntriesText,
+      innerHTML: elementConfig[identifier].noEntriesText,
       disabled: true,
       selected: false,
       hidden: options.length > 0,
@@ -166,15 +166,31 @@
     )
   }
 
-  function handleSelectUpdate(originalSelector, optionsAsList, uniq) {
-    originalSelector.on("change DOMSubtreeModified click", function() {
+  function handleSelectUpdate(originalSelector, optionsAsList, identifier) {
+    const swap_options = function(originalSelector, optionsAsList, identifier) {
       optionsAsList.find("li").remove();
       var options = originalSelector.find("optgroup, option");
-      buildList(originalSelector, optionsAsList, options, uniq);
-      if(elementConfig[uniq].searchBox.enabled) {
-        showOnly(optionsAsList, $(`#optionize-searchbox-${uniq}`))
+      buildList(originalSelector, optionsAsList, options, identifier);
+      if(elementConfig[identifier].searchBox.enabled) {
+        showOnly(optionsAsList, $(`#optionize-searchbox-${identifier}`))
       }
+    }
+
+    // 1 jQuery events for click or change
+    originalSelector.on("change click", function() {
+      swap_options(originalSelector, optionsAsList, identifier)
     })
+
+    // 2 use mutation observer for dom tree changes
+    const targetNode = originalSelector[0];
+    const config = { attributes: true, childList: true, subtree: true };
+    const callback = (mutationList, _observer) => {
+      for (const _mutation of mutationList) {
+        swap_options(originalSelector, optionsAsList, identifier)
+      }
+    };
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
   }
 
   function handleOptgroupClick(originalSelector, optionsAsList) {
@@ -193,14 +209,14 @@
     })
   }
 
-  function addSearchBox(optionsAsList, id, uniq) {
+  function addSearchBox(optionsAsList, id, identifier) {
     var searchBox = $(
       "<input>",
       {
         type: 'text',
         id: id,
         class: 'optionize-search-box',
-        placeholder: elementConfig[uniq].searchBox.placeholder
+        placeholder: elementConfig[identifier].searchBox.placeholder
       }
     )
     searchBox.on("keyup", function() {
