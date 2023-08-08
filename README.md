@@ -1,4 +1,4 @@
-# Optionize 1.0.3
+# Optionize 1.0.4
 
 # What is Optionize?
 
@@ -40,7 +40,7 @@ Include jQuery and Optionize in your websites head tag:
 
 ```
 <link rel="stylesheet" href="/path/to/optionize.css" />
-<script src="/path/to/jquery-3.3.1.min.js"></script>
+<script src="/path/to/jquery-3.7.0.min.js"></script>
 <script src="/path/to/optionize.min.js"></script>
 ```
 
