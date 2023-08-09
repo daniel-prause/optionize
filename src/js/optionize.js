@@ -1,5 +1,5 @@
 /*
- Optionize 1.0.4, a multi select box enhancer for jQuery
+ Optionize 1.0.5, a multi select box enhancer for jQuery
  by Daniel Prause
 */
 
